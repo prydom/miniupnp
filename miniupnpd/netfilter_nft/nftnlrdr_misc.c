@@ -1293,7 +1293,7 @@ chain_op(enum nf_tables_msg_types op, uint16_t family, const char * table,
 		nftnl_chain_set_u32(chain, NFTNL_CHAIN_FAMILY, family);
 		nftnl_chain_set_str(chain, NFTNL_CHAIN_TABLE, table);
 		nftnl_chain_set_str(chain, NFTNL_CHAIN_NAME, name);
-		if (op == NFT_MSG_NEWCHAIN) {
+		if (op == NFT_MSG_NEWCHAIN && type != NULL) {
 			nftnl_chain_set_str(chain, NFTNL_CHAIN_TYPE, type);
 			nftnl_chain_set_u32(chain, NFTNL_CHAIN_HOOKNUM, hooknum);
 			nftnl_chain_set_s32(chain, NFTNL_CHAIN_PRIO, priority);

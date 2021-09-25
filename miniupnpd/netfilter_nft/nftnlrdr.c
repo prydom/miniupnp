@@ -81,7 +81,7 @@ init_redirect(void)
 	}
 	if (result == 0) {
 		result = chain_op(NFT_MSG_NEWCHAIN, NFPROTO_INET, nft_table,
-						  nft_forward_chain, FILTER_CHAIN_TYPE, NF_INET_FORWARD, NF_IP_PRI_FILTER - 25);
+						  nft_forward_chain, NULL, NULL, NULL);
 	}
 
 	/* 'ip' family */
@@ -90,11 +90,11 @@ init_redirect(void)
 	}
 	if (result == 0) {
 		result = chain_op(NFT_MSG_NEWCHAIN, NFPROTO_IPV4, nft_table,
-						  nft_prerouting_chain, NAT_CHAIN_TYPE, NF_INET_PRE_ROUTING, NF_IP_PRI_NAT_DST);
+						  nft_prerouting_chain, NULL, NULL, NULL);
 	}
 	if (result == 0) {
 		result = chain_op(NFT_MSG_NEWCHAIN, NFPROTO_IPV4, nft_table,
-						  nft_postrouting_chain, NAT_CHAIN_TYPE, NF_INET_POST_ROUTING, NF_IP_PRI_NAT_SRC);
+						  nft_postrouting_chain, NULL, NULL, NULL);
 	}
 
 	/* 'ip6' family */
@@ -103,11 +103,11 @@ init_redirect(void)
 	}
 	if (result == 0) {
 		result = chain_op(NFT_MSG_NEWCHAIN, NFPROTO_IPV6, nft_table,
-						  nft_prerouting_chain, NAT_CHAIN_TYPE, NF_INET_PRE_ROUTING, NF_IP_PRI_NAT_DST);
+						  nft_prerouting_chain, NULL, NULL, NULL);
 	}
 	if (result == 0) {
 		result = chain_op(NFT_MSG_NEWCHAIN, NFPROTO_IPV6, nft_table,
-						  nft_postrouting_chain, NAT_CHAIN_TYPE, NF_INET_POST_ROUTING, NF_IP_PRI_NAT_SRC);
+						  nft_postrouting_chain, NULL, NULL, NULL);
 	}
 
 	return result;
@@ -116,38 +116,9 @@ init_redirect(void)
 void
 shutdown_redirect(void)
 {
-	int result;
 
-	/* 'inet' family */
-	result = chain_op(NFT_MSG_DELCHAIN, NFPROTO_INET, nft_table,
-					  nft_forward_chain, FILTER_CHAIN_TYPE, NF_INET_FORWARD, NF_IP_PRI_FILTER - 25);
-	if (result == 0) {
-		result = table_op(NFT_MSG_DELTABLE, NFPROTO_INET, nft_table);
-	}
-
-	/* 'ip' family */
-	result = chain_op(NFT_MSG_DELCHAIN, NFPROTO_IPV4, nft_table,
-					  nft_prerouting_chain, NAT_CHAIN_TYPE, NF_INET_PRE_ROUTING, NF_IP_PRI_NAT_DST);
-	if (result == 0) {
-		result = chain_op(NFT_MSG_DELCHAIN, NFPROTO_IPV4, nft_table,
-						  nft_postrouting_chain, NAT_CHAIN_TYPE, NF_INET_POST_ROUTING, NF_IP_PRI_NAT_SRC);
-	}
-	if (result == 0) {
-		result = table_op(NFT_MSG_DELTABLE, NFPROTO_IPV4, nft_table);
-	}
-
-	/* 'ip6' family */
-	if (result == 0) {
-		result = chain_op(NFT_MSG_DELCHAIN, NFPROTO_IPV6, nft_table,
-						  nft_prerouting_chain, NAT_CHAIN_TYPE, NF_INET_PRE_ROUTING, NF_IP_PRI_NAT_DST);
-	}
-	if (result == 0) {
-		result = chain_op(NFT_MSG_DELCHAIN, NFPROTO_IPV6, nft_table,
-						  nft_postrouting_chain, NAT_CHAIN_TYPE, NF_INET_POST_ROUTING, NF_IP_PRI_NAT_SRC);
-	}
-	if (result == 0) {
-		result = table_op(NFT_MSG_DELTABLE, NFPROTO_IPV6, nft_table);
-	}
+	/* Manually flush rules with shell script during restart */
+	/* TODO: flush rules here */
 
 	nft_mnl_disconnect();
 }
